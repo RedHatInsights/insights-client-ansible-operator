@@ -1,20 +1,4 @@
 ---
-- name: Egg Management Volume
-  k8s:
-    definition:
-      kind: PersistantVolumeClaim
-      apiVersion: "core/v1"
-      metadata:
-        name: "{{ meta.name }}-pvc"
-        namespace: "{{ meta.namespace }}"
-      spec:
-        accessModes:
-          - ReadWriteMany
-        volumeMode: Filesystem
-        resources:
-          requests:
-            storage: 2Gi
-
 - name: Node Selection CronJob
   k8s:
     state: present
@@ -28,7 +12,7 @@
         schedule: "* * * * *"
         jobTemplate:
           metadata:
-            name: "{{ meta.name }}"-job"
+            name: "{{ meta.name }}-job"
             namespace: "{{ meta.namespace }}"
             labels:
               app: insights
@@ -52,5 +36,4 @@
                         name: eggs
                 volumes:
                   - name: eggs
-                    persistentVolumeClaim:
-                      claimName: "{{ meta.name }}-pvc"
+                    emptyDir: {}
