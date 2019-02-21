@@ -1,11 +1,12 @@
-kind: RoleBinding
+kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: insights-client-ansible-operator
 subjects:
 - kind: ServiceAccount
   name: insights-client-ansible-operator
+  namespace: default
 roleRef:
-  kind: Role
-  name: insights-client-ansible-operator
+  kind: ClusterRole
+  name: cluster-admin
   apiGroup: rbac.authorization.k8s.io

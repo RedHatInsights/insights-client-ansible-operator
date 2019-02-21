@@ -1,2 +1,56 @@
 ---
-# tasks file for insights
+- name: Egg Management Volume
+  k8s:
+    definition:
+      kind: PersistantVolumeClaim
+      apiVersion: "core/v1"
+      metadata:
+        name: "{{ meta.name }}-pvc"
+        namespace: "{{ meta.namespace }}"
+      spec:
+        accessModes:
+          - ReadWriteMany
+        volumeMode: Filesystem
+        resources:
+          requests:
+            storage: 2Gi
+
+- name: Node Selection CronJob
+  k8s:
+    state: present
+    definition:
+      kind: CronJob
+      apiVersion: "batch/v1beta1"
+      metadata:
+        name: "{{ meta.name }}-cronjob"
+        namespace: "{{ meta.namespace }}"
+      spec:
+        schedule: "* * * * *"
+        jobTemplate:
+          metadata:
+            name: "{{ meta.name }}"-job"
+            namespace: "{{ meta.namespace }}"
+            labels:
+              app: insights
+          spec:
+            activeDeadlineSeconds: 300
+            backoffLimit: 2
+            completions: 1
+            parallelism: 1
+            template:
+              metadata:
+                labels:
+                  app: insights
+              spec:
+                restartPolicy: "Never"
+                containers:
+                  - name: "{{ meta.name }}-pod"
+                    command: "{{ entrypoint }}"
+                    image: "{{ image }}"
+                    volumeMounts:
+                      - mountPath: "/var/run/insights/eggs"
+                        name: eggs
+                volumes:
+                  - name: eggs
+                    persistentVolumeClaim:
+                      claimName: "{{ meta.name }}-pvc"

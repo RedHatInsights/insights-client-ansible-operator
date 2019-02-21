@@ -1,0 +1,5 @@
+---
+- version: v1alpha1
+  group: cloud.redhat.com
+  kind: Insights
+  role: /home/ec2-user/go/src/github.com/redhatinsights/insights-client-ansible-operator/roles/insights

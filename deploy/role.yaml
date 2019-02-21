@@ -1,5 +1,5 @@
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
   creationTimestamp: null
   name: insights-client-ansible-operator
@@ -14,14 +14,10 @@ rules:
   - events
   - configmaps
   - secrets
+  - namespaces
+  - nodes
   verbs:
   - '*'
-- apiGroups:
-  - ""
-  resources:
-  - namespaces
-  verbs:
-  - get
 - apiGroups:
   - apps
   resources:
@@ -44,3 +40,12 @@ rules:
   - '*'
   verbs:
   - '*'
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: insights-client-operator-ansible-beta
+rules:
+- apiGroups: ["", "extensions", "apps", "batch"]
+  resources: ["*"]
+  verbs: ["*"]

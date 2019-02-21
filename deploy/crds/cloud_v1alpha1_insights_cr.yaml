@@ -1,7 +1,9 @@
 apiVersion: cloud.redhat.com/v1alpha1
 kind: Insights
 metadata:
-  name: example-insights
+  name: insights-schedule
 spec:
-  # Add fields here
-  size: 3
+  image: "quay.io/jjaggars/insights-client-container:latest"
+  threshold: 5  # 1440
+  frequency: 5
+  entrypoint: ["/gather.py"]
