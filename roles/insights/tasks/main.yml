@@ -3,8 +3,8 @@
   k8s:
     definition:
       kind: Job
-      apiVersion: "batch/v1beta1"
-      metadata: 
+      apiVersion: "batch/v1"
+      metadata:
         name: "{{ meta.name }}-api-job"
         namespace: "{{ meta.namespace }}"
       spec:
@@ -14,18 +14,16 @@
             backoffLimit: 2
             completions: 1
             parallelism: 1
-            template:
-              spec:
-                restartPolicy: "Never"
-                containers:
-                  - name: "{{ meta.name }}-pod"
-                    command: "{{ entrypoint }}"
-                    image: "{{ image }}"
-                    volumeMounts:
-                      - mountPath: "/tmp/netrc"
-                        name: netrc
-                        readOnly: true
-                volumes:
-                  - name: netrc
-                    secret:
-                      secretName: {{ secret }}
+            restartPolicy: "Never"
+            containers:
+              - name: "{{ meta.name }}-pod"
+                command: "{{ entrypoint }}"
+                image: "{{ image }}"
+                volumeMounts:
+                  - mountPath: "/tmp/netrc"
+                    name: netrc
+                    readOnly: true
+            volumes:
+              - name: netrc
+                secret:
+                  secretName: "{{ secret }}"
