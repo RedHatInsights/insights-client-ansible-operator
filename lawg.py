@@ -4,6 +4,10 @@ import json
 
 for line in sys.stdin:
     try:
-        print(json.loads(line)["msg"])
+        json.loads(line)
+        sys.stdout.write(line)
     except:
-        print(line.strip())
+        sys.stdout.write(json.dumps({"msg": line.strip()}))
+        sys.stdout.write("\n")
+    finally:
+        sys.stdout.flush()

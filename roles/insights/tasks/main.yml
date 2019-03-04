@@ -1,30 +1,20 @@
 ---
-- name: Node Selection CronJob
+- name: API Collection Job
   k8s:
-    state: present
     definition:
-      kind: CronJob
+      kind: Job
       apiVersion: "batch/v1beta1"
-      metadata:
-        name: "{{ meta.name }}-cronjob"
+      metadata: 
+        name: "{{ meta.name }}-api-job"
         namespace: "{{ meta.namespace }}"
       spec:
-        schedule: "* * * * *"
-        jobTemplate:
-          metadata:
-            name: "{{ meta.name }}-job"
-            namespace: "{{ meta.namespace }}"
-            labels:
-              app: insights
+        template:
           spec:
             activeDeadlineSeconds: 300
             backoffLimit: 2
             completions: 1
             parallelism: 1
             template:
-              metadata:
-                labels:
-                  app: insights
               spec:
                 restartPolicy: "Never"
                 containers:
@@ -32,8 +22,10 @@
                     command: "{{ entrypoint }}"
                     image: "{{ image }}"
                     volumeMounts:
-                      - mountPath: "/var/run/insights/eggs"
-                        name: eggs
+                      - mountPath: "/tmp/netrc"
+                        name: netrc
+                        readOnly: true
                 volumes:
-                  - name: eggs
-                    emptyDir: {}
+                  - name: netrc
+                    secret:
+                      secretName: {{ secret }}
